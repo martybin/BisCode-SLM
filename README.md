@@ -4,7 +4,7 @@ A from-scratch decoder-only coding model. Weights start random. This repository 
 
 ## Status
 
-The configuration system is in place. The model, tokenizer, data pipeline, trainer, and inference code are not implemented yet. No dataset has been downloaded. `download_enabled` in `configs/data/initial.yaml` is false, and a training launch stays blocked while that flag is false.
+The configuration system and the byte-level BPE tokenizer are in place. The model, data pipeline, trainer, and inference code are not implemented yet. No dataset has been downloaded, and the 32,000-token tokenizer has not been trained on real code. `download_enabled` in `configs/data/initial.yaml` is false, and a training launch stays blocked while that flag is false.
 
 Design notes from the hardware and dataset audit:
 
@@ -48,6 +48,20 @@ pytest
 - `configs/data/initial.yaml` — permissive Python from CodeParrot Clean, streaming caps, downloads off
 
 The command prints any reason a training process must refuse to start. A valid config can still be blocked.
+
+## Tokenizer
+
+`codeslm.tokenizer` trains a byte-level BPE model from strings you pass in. `add_prefix_space` is false, the initial alphabet is all 256 bytes, and decode preserves newlines, indentation, and special tokens. The eight special tokens from the model YAML take ids 0 through 7.
+
+```bash
+python scripts/train_tokenizer.py \
+  --config configs/model/smoke.yaml \
+  --corpus path/to/local_utf8_files \
+  --output tokenizer/smoke \
+  --vocab-size 280
+```
+
+The script reads local files only. If more than half of the requested vocabulary would be unused reserved ids, it exits without writing the file. That is the guard against training the 32,000-token vocabulary on a handful of samples.
 
 ## License
 

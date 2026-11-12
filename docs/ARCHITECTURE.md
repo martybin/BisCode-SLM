@@ -1,6 +1,6 @@
 # Architecture
 
-Status: the architecture below is still a design. `codeslm.config` loads and checks the YAML, and `codeslm.config.sizing.count_parameters` implements the parameter formula. There is no `nn.Module` yet. When the model exists, a unit test must assert that `parameters()` matches `count_parameters`.
+Status: the transformer block below is still a design. `codeslm.config` loads the YAML, `codeslm.config.sizing.count_parameters` implements the parameter formula, and `codeslm.tokenizer` trains and loads the byte-level BPE tokenizer. There is no `nn.Module` yet. When the model exists, a unit test must assert that `parameters()` matches `count_parameters`. The 32,000-token tokenizer has not been trained on a real corpus.
 
 Hardware context: NVIDIA GeForce RTX 5070 Laptop, 7.53 GiB visible to PyTorch, BF16 supported. See [INITIAL_RESEARCH.md](INITIAL_RESEARCH.md).
 
@@ -128,6 +128,14 @@ Requirements that matter for code:
 - The trainer sees train rows only. Validation and test text, including HumanEval and MBPP, are not tokenizer training data.
 
 The BPE trainer's `vocab_size` is 32,000 with those specials reserved, so the embedding matrix and the tokenizer file agree.
+
+`codeslm.tokenizer.train_tokenizer` implements this contract:
+
+- Pretokenizer: byte-level, `add_prefix_space=false`, GPT-2 whitespace regex on. No Unicode normalizer.
+- The initial alphabet is the 256 byte symbols, so unseen code still round-trips.
+- Special tokens are ids 0–7 in the table order above.
+- If the corpus cannot fill `vocab_size`, the remaining ids are `<|reserved_N|>`. `decode` keeps special tokens unless `skip_special_tokens=True`.
+- `scripts/train_tokenizer.py` reads local UTF-8 files only. It refuses to save a tokenizer whose reserved ids are more than half of the vocabulary, which blocks an accidental 32k train on a tiny sample.
 
 ## Sequence packing
 
