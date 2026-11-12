@@ -1,0 +1,51 @@
+# Short pipeline check. Not a pretraining run.
+# Caps are intentional. Do not raise max_tokens or max_steps for a "real" run
+# in this file. Add a separate experiment config instead.
+# This file does not start training by itself. download_enabled in the data
+# config is false, so a runner must refuse to launch until data is approved
+# or a synthetic corpus is requested explicitly.
+
+schema_version: 1
+experiment_name: smoke-test
+model_config: configs/model/smoke.yaml
+data_config: configs/data/initial.yaml
+seed: 1234
+
+runtime:
+  device: auto
+  precision: auto
+  gradient_checkpointing: true
+  allow_tf32: false
+
+optimization:
+  optimizer: adamw
+  learning_rate: 6.0e-4
+  weight_decay: 0.1
+  betas: [0.9, 0.95]
+  eps: 1.0e-8
+  warmup_steps: 5
+  min_lr_ratio: 0.1
+  grad_clip_norm: 1.0
+
+batch:
+  seq_len: 512
+  micro_batch_size: 2
+  gradient_accumulation_steps: 2
+
+budget:
+  max_steps: 20
+  max_tokens: 20000
+
+checkpoint:
+  output_dir: checkpoints/smoke
+  save_every_steps: 20
+  keep_last: 1
+
+logging:
+  log_every_steps: 1
+  eval_every_steps: 10
+  tensorboard_dir: logs/smoke
+  mlflow_enabled: false
+
+early_stopping:
+  enabled: false

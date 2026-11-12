@@ -1,0 +1,12 @@
+# Direct dependencies. This machine already has them in .venv, including the
+# CUDA wheel torch==2.15.0+cu132. Prefer that environment. A bare
+# `pip install torch` can select a different build.
+PyYAML>=6.0.3
+numpy>=2
+torch>=2.5
+tokenizers>=0.20
+datasets>=3
+safetensors>=0.4
+tensorboard>=2.16
+tqdm>=4.66
+pytest>=8

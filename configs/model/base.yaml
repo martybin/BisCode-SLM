@@ -1,0 +1,41 @@
+# Baseline Coding SLM. Proposed configuration, calculated 2026-11-12.
+# Tied embeddings: 168,059,904 parameters.
+# Untied would be 200,827,904. Tie is the baseline.
+# See docs/ARCHITECTURE.md for the arithmetic and the memory estimate.
+
+schema_version: 1
+name: codeslm-168m
+
+model:
+  architecture: decoder_only
+  vocab_size: 32000
+  d_model: 1024
+  n_layers: 12
+  n_heads: 16
+  n_kv_heads: 4
+  intermediate_size: 2816
+  max_seq_len: 2048
+  rope_theta: 10000.0
+  rms_norm_eps: 1.0e-6
+  tie_embeddings: true
+  bias: false
+  dropout: 0.0
+  # Residual output projections use std = init_std / sqrt(2 * n_layers).
+  init_std: 0.02
+
+tokenizer:
+  type: byte_level_bpe
+  vocab_size: 32000
+  add_prefix_space: false
+  special_tokens:
+    pad: "<|pad|>"
+    unk: "<|unk|>"
+    bos: "<|bos|>"
+    eos: "<|eos|>"
+    fim_prefix: "<|fim_prefix|>"
+    fim_middle: "<|fim_middle|>"
+    fim_suffix: "<|fim_suffix|>"
+    sep: "<|sep|>"
+
+# Documented count. A unit test must recompute this from the module once it exists.
+parameter_count: 168059904

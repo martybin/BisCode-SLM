@@ -1,0 +1,38 @@
+# Smoke model. Same architecture as configs/model/base.yaml, sized for CPU tests
+# and a short overfit check. Calculated parameter count: 40,509,952.
+# Vocabulary matches the baseline so a real tokenizer can be attached.
+
+schema_version: 1
+name: codeslm-smoke-40m
+
+model:
+  architecture: decoder_only
+  vocab_size: 32000
+  d_model: 512
+  n_layers: 8
+  n_heads: 8
+  n_kv_heads: 2
+  intermediate_size: 1536
+  max_seq_len: 2048
+  rope_theta: 10000.0
+  rms_norm_eps: 1.0e-6
+  tie_embeddings: true
+  bias: false
+  dropout: 0.0
+  init_std: 0.02
+
+tokenizer:
+  type: byte_level_bpe
+  vocab_size: 32000
+  add_prefix_space: false
+  special_tokens:
+    pad: "<|pad|>"
+    unk: "<|unk|>"
+    bos: "<|bos|>"
+    eos: "<|eos|>"
+    fim_prefix: "<|fim_prefix|>"
+    fim_middle: "<|fim_middle|>"
+    fim_suffix: "<|fim_suffix|>"
+    sep: "<|sep|>"
+
+parameter_count: 40509952
