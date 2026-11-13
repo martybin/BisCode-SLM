@@ -1,6 +1,6 @@
 # Architecture
 
-Status: the transformer block below is still a design. `codeslm.config` loads the YAML, `codeslm.config.sizing.count_parameters` implements the parameter formula, and `codeslm.tokenizer` trains and loads the byte-level BPE tokenizer. There is no `nn.Module` yet. When the model exists, a unit test must assert that `parameters()` matches `count_parameters`. The 32,000-token tokenizer has not been trained on a real corpus.
+Status: `CodeModel` implements the block below. `codeslm.config` loads the YAML, and a CPU test checks that the tied baseline has 168,059,904 parameters. The 32,000-token tokenizer has not been trained on a real corpus, and no training run has been started.
 
 Hardware context: NVIDIA GeForce RTX 5070 Laptop, 7.53 GiB visible to PyTorch, BF16 supported. See [INITIAL_RESEARCH.md](INITIAL_RESEARCH.md).
 

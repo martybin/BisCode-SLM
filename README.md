@@ -4,7 +4,7 @@ A from-scratch decoder-only coding model. Weights start random. This repository 
 
 ## Status
 
-The configuration system, byte-level BPE tokenizer, and local data pipeline are in place. The model, trainer, and inference code are not implemented yet. No dataset has been downloaded, and the 32,000-token tokenizer has not been trained on real code. `download_enabled` in `configs/data/initial.yaml` is false, and a training launch stays blocked while that flag is false.
+The configuration system, byte-level BPE tokenizer, local data pipeline, and decoder-only model are in place. The trainer and inference code are not implemented yet. No dataset has been downloaded, and the 32,000-token tokenizer has not been trained on real code. `download_enabled` in `configs/data/initial.yaml` is false, and a training launch stays blocked while that flag is false.
 
 Design notes from the hardware and dataset audit:
 
@@ -64,6 +64,8 @@ python scripts/train_tokenizer.py \
 The script reads local files only. If more than half of the requested vocabulary would be unused reserved ids, it exits without writing the file. That is the guard against training the 32,000-token vocabulary on a handful of samples.
 
 ## Data pipeline
+
+`CodeModel` is the decoder-only network: pre-norm RMSNorm, RoPE, grouped-query attention through PyTorch SDPA, SwiGLU, and a tied embedding. `CodeModel.from_config` reads a model YAML. A CPU test checks the 168,059,904-parameter baseline.
 
 `codeslm.data.run_pipeline` filters records already in memory. It does not download them. Permissive licenses in the data config are kept, excluded licenses are dropped, and any other license is quarantined. Empty, short, binary, generated, minified, vendored, and non-code files are excluded. Suspected secrets are quarantined, and the matched text is not written to the report. Exact SHA-256 duplicates and MinHash near-duplicates are removed. A repository or identical body that appears in validation is removed from training. `pack_texts` appends the end-of-sequence token, restarts positions on each document, and does not train a token to predict across a document boundary.
 

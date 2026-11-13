@@ -1,8 +1,7 @@
 """Parameter counts for the decoder-only architecture.
 
-The model module does not exist yet. Training code must keep this formula and
-``nn.Module.parameters()`` in agreement. Biases are included when ``bias`` is
-true. RoPE and attention masks contribute no parameters.
+``CodeModel.num_parameters()`` must match this formula. Biases are included
+when ``bias`` is true. RoPE and attention masks contribute no parameters.
 """
 
 
