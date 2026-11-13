@@ -4,7 +4,7 @@ A from-scratch decoder-only coding model. Weights start random. This repository 
 
 ## Status
 
-The configuration system, tokenizer, data pipeline, model, training loop, and local inference are in place. No dataset has been downloaded, and no training run has been started. `download_enabled` in `configs/data/initial.yaml` is false, and `python scripts/train.py` refuses to launch while that flag is false.
+The configuration system, tokenizer, data pipeline, model, training loop, local inference, and evaluation are in place. No dataset has been downloaded, and no training run has been started. `download_enabled` in `configs/data/initial.yaml` is false, and `python scripts/train.py` refuses to launch while that flag is false.
 
 Design notes from the hardware and dataset audit:
 
@@ -89,6 +89,10 @@ python scripts/generate.py \
 ```
 
 That checkpoint does not exist yet. The command is ready for a checkpoint produced by an approved training run.
+
+## Evaluation
+
+`perplexity` scores next-token loss on batches you already have. It does not load a benchmark. `check_syntax` parses Python with `ast`. `execute_functions` runs each candidate in a separate interpreter with a timeout, a CPU limit, a memory limit, and a clean environment. The report includes pass rate, syntax-error rate, runtime-error rate, and test pass rate. The child process is not a container, and HumanEval has not been downloaded.
 
 ## License
 
